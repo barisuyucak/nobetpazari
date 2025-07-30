@@ -2,13 +2,14 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, fullName: string, phoneNumber: string, studentNumber?: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, fullName: string, phoneNumber: string, studentNumber?: string) => Promise<{ error: any; needsVerification?: boolean }>;
   signOut: () => Promise<void>;
 }
 
@@ -66,13 +67,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signUp = async (email: string, password: string, fullName: string, phoneNumber: string, studentNumber?: string) => {
-    const redirectUrl = `${window.location.origin}/`;
-    
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: redirectUrl,
         data: {
           full_name: fullName,
           phone_number: phoneNumber,
@@ -87,11 +85,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         description: error.message,
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "Kayıt Başarılı",
-        description: "Email adresinizi kontrol edin ve hesabınızı doğrulayın.",
-      });
+      return { error };
+    } 
+    
+    // Check if user needs email verification
+    if (data.user && !data.session) {
+      return { error: null, needsVerification: true };
     }
     
     return { error };

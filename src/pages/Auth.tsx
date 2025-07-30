@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +9,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Auth = () => {
+  const [searchParams] = useSearchParams();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,6 +23,13 @@ const Auth = () => {
   const navigate = useNavigate();
   const { user, signIn, signUp } = useAuth();
 
+  useEffect(() => {
+    const mode = searchParams.get('mode');
+    if (mode === 'signup') {
+      setIsLogin(false);
+    }
+  }, [searchParams]);
+
   // Redirect if already logged in
   if (user) {
     return <Navigate to="/dashboard" replace />;
@@ -29,10 +37,16 @@ const Auth = () => {
 
   const validateStudentInfo = (studentNumber: string, fullName: string) => {
     // TODO: Replace with actual validation against provided list
-    // For now, just checking if both fields are filled
+    // For now, just checking if both fields are filled and student number is 10 digits
     if (!studentNumber || !fullName) {
       return false;
     }
+    
+    // Validate student number is exactly 10 digits
+    if (!/^\d{10}$/.test(studentNumber)) {
+      return false;
+    }
+    
     // This will be replaced with actual list validation
     return true;
   };
@@ -58,7 +72,12 @@ const Auth = () => {
         return;
       }
 
-      await signUp(email, password, fullName, phoneNumber, studentNumber);
+      const result = await signUp(email, password, fullName, phoneNumber, studentNumber);
+      
+      if (!result.error && result.needsVerification) {
+        navigate('/verify-otp', { state: { email } });
+        return;
+      }
     }
 
     setLoading(false);
@@ -121,7 +140,9 @@ const Auth = () => {
                      value={studentNumber}
                      onChange={(e) => setStudentNumber(e.target.value)}
                      required={!isLogin}
-                     placeholder="123456789"
+                      placeholder="1234567890"
+                      maxLength={10}
+                      pattern="\d{10}"
                    />
                  </div>
                </>

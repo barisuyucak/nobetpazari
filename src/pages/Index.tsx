@@ -15,7 +15,7 @@ const Index = () => {
             <Button variant="outline" onClick={() => window.location.href = '/auth'}>
               Giriş Yap
             </Button>
-            <Button onClick={() => window.location.href = '/auth'}>
+            <Button onClick={() => window.location.href = '/auth?mode=signup'}>
               Kayıt Ol
             </Button>
           </div>
