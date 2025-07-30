@@ -1,11 +1,12 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
-import { Plus, ShoppingCart, LogOut } from 'lucide-react';
+import { Plus, ShoppingCart, LogOut, User } from 'lucide-react';
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   if (!user) {
     return <Navigate to="/auth" replace />;
@@ -16,14 +17,24 @@ const Dashboard = () => {
       <header className="border-b border-border">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-foreground">Nöbet Pazarı</h1>
-          <Button 
-            variant="outline" 
-            onClick={signOut}
-            className="flex items-center gap-2"
-          >
-            <LogOut className="h-4 w-4" />
-            Çıkış Yap
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate('/profile')}
+              className="flex items-center gap-2"
+            >
+              <User className="h-4 w-4" />
+              Profil
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={signOut}
+              className="flex items-center gap-2"
+            >
+              <LogOut className="h-4 w-4" />
+              Çıkış Yap
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -34,7 +45,7 @@ const Dashboard = () => {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => window.location.href = '/create-shift'}>
+          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/create-shift')}>
             <CardHeader className="text-center">
               <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Plus className="h-8 w-8 text-primary" />
@@ -51,7 +62,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => window.location.href = '/shift-offers'}>
+          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/shift-offers')}>
             <CardHeader className="text-center">
               <div className="mx-auto w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mb-4">
                 <ShoppingCart className="h-8 w-8 text-secondary-foreground" />

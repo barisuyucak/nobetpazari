@@ -41,27 +41,31 @@ const VerifyOTP = () => {
 
     setLoading(true);
 
-    const { error } = await supabase.auth.verifyOtp({
-      email,
-      token: otp,
-      type: 'signup'
-    });
+    try {
+      const { data, error } = await supabase.auth.verifyOtp({
+        email,
+        token: otp,
+        type: 'signup'
+      });
 
-    if (error) {
+      if (error) throw error;
+
+      if (data.user) {
+        toast({
+          title: "Başarılı",
+          description: "Hesabınız doğrulandı! Giriş yapılıyor...",
+        });
+        navigate('/dashboard');
+      }
+    } catch (error: any) {
       toast({
         title: "Doğrulama Hatası",
         description: "Kod geçersiz veya süresi dolmuş. Lütfen tekrar deneyin.",
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "Başarılı",
-        description: "Hesabınız doğrulandı! Giriş yapılıyor...",
-      });
-      navigate('/dashboard');
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const handleResendOTP = async () => {
