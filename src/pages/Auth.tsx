@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Auth = () => {
@@ -12,8 +14,12 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [studentNumber, setStudentNumber] = useState('');
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [validationError, setValidationError] = useState('');
   
+  const navigate = useNavigate();
   const { user, signIn, signUp } = useAuth();
 
   // Redirect if already logged in
@@ -21,14 +27,38 @@ const Auth = () => {
     return <Navigate to="/dashboard" replace />;
   }
 
+  const validateStudentInfo = (studentNumber: string, fullName: string) => {
+    // TODO: Replace with actual validation against provided list
+    // For now, just checking if both fields are filled
+    if (!studentNumber || !fullName) {
+      return false;
+    }
+    // This will be replaced with actual list validation
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationError('');
     setLoading(true);
 
     if (isLogin) {
       await signIn(email, password);
     } else {
-      await signUp(email, password, fullName, phoneNumber);
+      // Validate student information
+      if (!validateStudentInfo(studentNumber, fullName)) {
+        setValidationError('Numaranız ve isminiz elimizdeki verilerle uyuşmuyor. Bir sıkıntı olduğunu düşünüyorsanız bizimle iletişime geçebilirsiniz.');
+        setLoading(false);
+        return;
+      }
+
+      if (!agreeToTerms) {
+        setValidationError('Kullanıcı sözleşmesini kabul etmeniz gerekmektedir.');
+        setLoading(false);
+        return;
+      }
+
+      await signUp(email, password, fullName, phoneNumber, studentNumber);
     }
 
     setLoading(false);
@@ -38,6 +68,15 @@ const Auth = () => {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/')}
+            className="absolute top-4 left-4 flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Ana Sayfa
+          </Button>
           <CardTitle className="text-2xl font-bold">
             {isLogin ? 'Giriş Yap' : 'Kayıt Ol'}
           </CardTitle>
@@ -63,19 +102,30 @@ const Auth = () => {
                     placeholder="Dr. Ahmet Yılmaz"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phoneNumber">Telefon Numarası</Label>
-                  <Input
-                    id="phoneNumber"
-                    type="tel"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    required={!isLogin}
-                    placeholder="+90 555 123 4567"
-                  />
-                </div>
-              </>
-            )}
+                 <div className="space-y-2">
+                   <Label htmlFor="phoneNumber">Telefon Numarası</Label>
+                   <Input
+                     id="phoneNumber"
+                     type="tel"
+                     value={phoneNumber}
+                     onChange={(e) => setPhoneNumber(e.target.value)}
+                     required={!isLogin}
+                     placeholder="+90 555 123 4567"
+                   />
+                 </div>
+                 <div className="space-y-2">
+                   <Label htmlFor="studentNumber">Öğrenci Numarası</Label>
+                   <Input
+                     id="studentNumber"
+                     type="text"
+                     value={studentNumber}
+                     onChange={(e) => setStudentNumber(e.target.value)}
+                     required={!isLogin}
+                     placeholder="123456789"
+                   />
+                 </div>
+               </>
+             )}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -87,24 +137,44 @@ const Auth = () => {
                 placeholder="ornek@hastane.com"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Şifre</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="••••••••"
-              />
-            </div>
-            <Button 
-              type="submit" 
-              className="w-full" 
-              disabled={loading}
-            >
-              {loading ? 'Yükleniyor...' : (isLogin ? 'Giriş Yap' : 'Kayıt Ol')}
-            </Button>
+             <div className="space-y-2">
+               <Label htmlFor="password">Şifre</Label>
+               <Input
+                 id="password"
+                 type="password"
+                 value={password}
+                 onChange={(e) => setPassword(e.target.value)}
+                 required
+                 placeholder="••••••••"
+               />
+             </div>
+             {!isLogin && (
+               <div className="flex items-center space-x-2">
+                 <Checkbox 
+                   id="agreeToTerms"
+                   checked={agreeToTerms}
+                   onCheckedChange={(checked) => setAgreeToTerms(checked as boolean)}
+                 />
+                 <Label 
+                   htmlFor="agreeToTerms" 
+                   className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                 >
+                   Kullanıcı sözleşmesini okudum ve kabul ediyorum
+                 </Label>
+               </div>
+             )}
+             {validationError && (
+               <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
+                 {validationError}
+               </div>
+             )}
+             <Button 
+               type="submit" 
+               className="w-full" 
+               disabled={loading}
+             >
+               {loading ? 'Yükleniyor...' : (isLogin ? 'Giriş Yap' : 'Kayıt Ol')}
+             </Button>
           </form>
           <div className="mt-4 text-center">
             <Button
