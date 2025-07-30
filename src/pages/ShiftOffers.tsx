@@ -15,6 +15,7 @@ interface Shift {
   price: number;
   shift_date: string;
   shift_time: string | null;
+  duration: string | null;
   location: string | null;
   status: string;
   seller_id: string;
@@ -162,6 +163,13 @@ const ShiftOffers = () => {
                       <div className="flex items-center gap-2 text-sm">
                         <Clock className="h-4 w-4 text-muted-foreground" />
                         <span>{formatTime(shift.shift_time)}</span>
+                      </div>
+                    )}
+                    
+                    {shift.duration && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <span>{shift.duration}</span>
                       </div>
                     )}
                     

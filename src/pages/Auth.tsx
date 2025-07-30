@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -16,6 +17,8 @@ const Auth = () => {
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [studentNumber, setStudentNumber] = useState('');
+  const [university, setUniversity] = useState('');
+  const [language, setLanguage] = useState('');
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [validationError, setValidationError] = useState('');
@@ -72,7 +75,7 @@ const Auth = () => {
         return;
       }
 
-      const result = await signUp(email, password, fullName, phoneNumber, studentNumber);
+      const result = await signUp(email, password, fullName, phoneNumber, studentNumber, university, language);
       
       if (!result.error && result.needsVerification) {
         navigate('/verify-otp', { state: { email } });
@@ -132,19 +135,42 @@ const Auth = () => {
                      placeholder="+90 555 123 4567"
                    />
                  </div>
-                 <div className="space-y-2">
-                   <Label htmlFor="studentNumber">Öğrenci Numarası</Label>
-                   <Input
-                     id="studentNumber"
-                     type="text"
-                     value={studentNumber}
-                     onChange={(e) => setStudentNumber(e.target.value)}
-                     required={!isLogin}
-                      placeholder="1234567890"
-                      maxLength={10}
-                      pattern="\d{10}"
-                   />
-                 </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="studentNumber">Öğrenci Numarası</Label>
+                    <Input
+                      id="studentNumber"
+                      type="text"
+                      value={studentNumber}
+                      onChange={(e) => setStudentNumber(e.target.value)}
+                      required={!isLogin}
+                       placeholder="1234567890"
+                       maxLength={10}
+                       pattern="\d{10}"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="university">Üniversite</Label>
+                    <Select value={university} onValueChange={setUniversity} required={!isLogin}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Üniversitenizi seçin" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="İstanbul Üniversitesi Tıp Fakültesi">İstanbul Üniversitesi Tıp Fakültesi</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="language">Öğrenim Diliniz</Label>
+                    <Select value={language} onValueChange={setLanguage} required={!isLogin}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Öğrenim dilinizi seçin" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="English">English</SelectItem>
+                        <SelectItem value="Türkçe">Türkçe</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                </>
              )}
             <div className="space-y-2">

@@ -58,6 +58,7 @@ export type Database = {
           full_name: string | null
           id: string
           is_phone_verified: boolean
+          language: string | null
           phone_number: string | null
           role: Database["public"]["Enums"]["user_role"]
           student_number: string | null
@@ -70,6 +71,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_phone_verified?: boolean
+          language?: string | null
           phone_number?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           student_number?: string | null
@@ -82,6 +84,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_phone_verified?: boolean
+          language?: string | null
           phone_number?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           student_number?: string | null
@@ -96,6 +99,7 @@ export type Database = {
           buyer_id: string | null
           created_at: string
           description: string
+          duration: string | null
           id: string
           location: string | null
           price: number
@@ -110,6 +114,7 @@ export type Database = {
           buyer_id?: string | null
           created_at?: string
           description: string
+          duration?: string | null
           id?: string
           location?: string | null
           price: number
@@ -124,6 +129,7 @@ export type Database = {
           buyer_id?: string | null
           created_at?: string
           description?: string
+          duration?: string | null
           id?: string
           location?: string | null
           price?: number

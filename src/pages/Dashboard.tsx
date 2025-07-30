@@ -64,8 +64,8 @@ const Dashboard = () => {
 
           <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/shift-offers')}>
             <CardHeader className="text-center">
-              <div className="mx-auto w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mb-4">
-                <ShoppingCart className="h-8 w-8 text-secondary-foreground" />
+              <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <ShoppingCart className="h-8 w-8 text-primary" />
               </div>
               <CardTitle className="text-xl">Nöbet Satın Almak İstiyorum</CardTitle>
               <CardDescription>
@@ -73,13 +73,42 @@ const Dashboard = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="secondary" className="w-full" size="lg">
+              <Button className="w-full" size="lg">
                 Nöbet Tekliflerini Gör
               </Button>
             </CardContent>
           </Card>
         </div>
+
       </main>
+
+      {/* Footer */}
+      <footer className="mt-16 border-t border-border">
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="bg-card border border-border rounded-lg p-4 text-center hover:shadow-md transition-shadow cursor-pointer">
+              <h4 className="font-semibold text-foreground">Telegram Grubu</h4>
+              <p className="text-sm text-muted-foreground mt-1">Topluluk sohbeti</p>
+            </div>
+            <div className="bg-card border border-border rounded-lg p-4 text-center hover:shadow-md transition-shadow cursor-pointer">
+              <h4 className="font-semibold text-foreground">Instagram</h4>
+              <p className="text-sm text-muted-foreground mt-1">Güncellemeler</p>
+            </div>
+            <div className="bg-card border border-border rounded-lg p-4 text-center hover:shadow-md transition-shadow cursor-pointer">
+              <h4 className="font-semibold text-foreground">SSS</h4>
+              <p className="text-sm text-muted-foreground mt-1">Sık sorulan sorular</p>
+            </div>
+            <div className="bg-card border border-border rounded-lg p-4 text-center hover:shadow-md transition-shadow cursor-pointer">
+              <h4 className="font-semibold text-foreground">İletişim</h4>
+              <p className="text-sm text-muted-foreground mt-1">Bize ulaşın</p>
+            </div>
+            <div className="bg-card border border-border rounded-lg p-4 text-center hover:shadow-md transition-shadow cursor-pointer">
+              <h4 className="font-semibold text-foreground">Kullanıcı Sözleşmesi</h4>
+              <p className="text-sm text-muted-foreground mt-1">Şartlar ve koşullar</p>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

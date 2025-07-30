@@ -8,7 +8,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, fullName: string, phoneNumber: string, studentNumber?: string) => Promise<{ error: any; needsVerification?: boolean }>;
+  signUp: (email: string, password: string, fullName: string, phoneNumber: string, studentNumber: string, university: string, language: string) => Promise<{ error: any; needsVerification?: boolean }>;
   signOut: () => Promise<void>;
 }
 
@@ -78,7 +78,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
-  const signUp = async (email: string, password: string, fullName: string, phoneNumber: string, studentNumber?: string) => {
+  const signUp = async (email: string, password: string, fullName: string, phoneNumber: string, studentNumber: string, university: string, language: string) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -87,6 +87,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           full_name: fullName,
           phone_number: phoneNumber,
           student_number: studentNumber,
+          university: university,
+          language: language,
         }
       }
     });

@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -16,6 +17,7 @@ const CreateShift = () => {
   const [price, setPrice] = useState('');
   const [shiftDate, setShiftDate] = useState('');
   const [shiftTime, setShiftTime] = useState('');
+  const [duration, setDuration] = useState('');
   const [location, setLocation] = useState('');
   const [loading, setLoading] = useState(false);
   
@@ -31,6 +33,28 @@ const CreateShift = () => {
     e.preventDefault();
     setLoading(true);
 
+    // Validation
+    const today = new Date().toISOString().split('T')[0];
+    if (shiftDate < today) {
+      toast({
+        title: "Hata",
+        description: "Bugünden eski bir tarih seçemezsiniz.",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+
+    if (parseFloat(price) < 0) {
+      toast({
+        title: "Hata",
+        description: "Fiyat negatif olamaz.",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('shifts')
@@ -42,6 +66,7 @@ const CreateShift = () => {
             price: parseFloat(price),
             shift_date: shiftDate,
             shift_time: shiftTime || null,
+            duration: duration || null,
             location,
           }
         ]);
@@ -145,11 +170,12 @@ const CreateShift = () => {
                     value={shiftDate}
                     onChange={(e) => setShiftDate(e.target.value)}
                     required
+                    min={new Date().toISOString().split('T')[0]}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="shiftTime">Nöbet Saati</Label>
+                  <Label htmlFor="shiftTime">Nöbet Başlangıç Saati</Label>
                   <Input
                     id="shiftTime"
                     type="time"
@@ -158,6 +184,19 @@ const CreateShift = () => {
                     placeholder="20:00"
                   />
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="duration">Nöbet Süresi</Label>
+                <Select value={duration} onValueChange={setDuration}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Nöbet süresini seçin" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Gece 12'ye kadar.">Gece 12'ye kadar.</SelectItem>
+                    <SelectItem value="24 Saat">24 Saat</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <Button 
