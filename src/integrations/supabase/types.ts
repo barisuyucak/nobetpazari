@@ -14,7 +14,128 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          read_at: string | null
+          receiver_id: string
+          sender_id: string
+          shift_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          receiver_id: string
+          sender_id: string
+          shift_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          receiver_id?: string
+          sender_id?: string
+          shift_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_shift_id_fkey"
+            columns: ["shift_id"]
+            isOneToOne: false
+            referencedRelation: "shifts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          is_phone_verified: boolean
+          phone_number: string | null
+          role: Database["public"]["Enums"]["user_role"]
+          student_number: string | null
+          university: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          is_phone_verified?: boolean
+          phone_number?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          student_number?: string | null
+          university?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          is_phone_verified?: boolean
+          phone_number?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          student_number?: string | null
+          university?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      shifts: {
+        Row: {
+          buyer_id: string | null
+          created_at: string
+          description: string
+          id: string
+          location: string | null
+          price: number
+          seller_id: string
+          shift_date: string
+          shift_time: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          buyer_id?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          location?: string | null
+          price: number
+          seller_id: string
+          shift_date: string
+          shift_time?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          buyer_id?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          location?: string | null
+          price?: number
+          seller_id?: string
+          shift_date?: string
+          shift_time?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +144,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      user_role: "doctor" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +271,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_role: ["doctor", "admin"],
+    },
   },
 } as const
